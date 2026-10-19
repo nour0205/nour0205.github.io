@@ -231,6 +231,7 @@ mark { background: var(--mark); color: inherit; padding: 0 .15em; border-radius:
 @media (max-width: 560px) { .bar-row { grid-template-columns: 1fr 56px; } .bar-row .bar-track { grid-column: 1 / -1; grid-row: 2; } }
 .decisions h3 { font-family: var(--serif); font-weight: 600; font-size: 1.5rem; margin: 1.6rem 0 1rem; }
 .cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: .9rem; }
+@media (min-width: 901px) { .cards.cards-3 { grid-template-columns: repeat(3, 1fr); } }
 @media (max-width: 900px) { .cards { grid-template-columns: 1fr 1fr; } }
 @media (max-width: 520px) { .cards { grid-template-columns: 1fr; } }
 .cards article { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 1rem 1.1rem; box-shadow: var(--shadow); }
