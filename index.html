@@ -301,8 +301,8 @@
   </div>
 
   <div class="decisions reveal">
-    <h3><span class="fr">Ce que les mesures m'ont fait retirer</span><span class="en">What the measurements made me remove</span></h3>
-    <div class="cards">
+    <h3><span class="fr">Ce que les mesures ont décidé</span><span class="en">What the measurements decided</span></h3>
+    <div class="cards cards-3">
       <article>
         <p class="num">0,802 → 0,693</p>
         <h4><span class="fr">Reranker heuristique : rejeté</span><span class="en">Heuristic reranker: rejected</span></h4>
@@ -319,9 +319,19 @@
         <p><span class="fr">Gain non démontré sur un petit corpus ; sera re-testé quand la bibliothèque grandira.</span><span class="en">No proven gain on a small corpus; re-tested once the library grows.</span></p>
       </article>
       <article>
+        <p class="num">κ 0,73 vs 0,58</p>
+        <h4><span class="fr">RAGAS : second avis seulement</span><span class="en">RAGAS: second opinion only</span></h4>
+        <p><span class="fr">Sur les mêmes 64 réponses, mon LLM-juge s'accorde mieux que RAGAS avec mes annotations sur la fidélité aux sources.</span><span class="en">On the same 64 answers, my LLM judge agrees with my groundedness labels better than RAGAS faithfulness does.</span></p>
+      </article>
+      <article>
+        <p class="num">32 / 32</p>
+        <h4><span class="fr">LLM-juge vérifié</span><span class="en">LLM judge checked</span></h4>
+        <p><span class="fr">Calibré sur 76 réponses annotées (kappa 0,82 sur les points requis), puis 32 jugements sur 32 identiques aux miens sur 20 réponses inédites.</span><span class="en">Calibrated on 76 labelled answers (kappa 0.82 on required points), then matched 32 of my 32 judgments on 20 unseen answers.</span></p>
+      </article>
+      <article>
         <p class="num">14 / 14</p>
         <h4><span class="fr">Questions pièges refusées</span><span class="en">Trap questions refused</span></h4>
-        <p><span class="fr">Sur un benchmark v3 de 48 questions, avec un LLM-juge calibré sur mes annotations (kappa 0,82).</span><span class="en">On a 48-question v3 benchmark, with an LLM judge calibrated on my labels (kappa 0.82).</span></p>
+        <p><span class="fr">Sur un benchmark v3 de 48 questions : quand la réponse n'est pas dans les notes, Recall dit « I don't know ».</span><span class="en">On a 48-question v3 benchmark: when the answer isn't in the notes, Recall says "I don't know".</span></p>
       </article>
     </div>
     <div class="demo-foot">
