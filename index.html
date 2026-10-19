@@ -50,6 +50,34 @@
       <span class="fr">Un agent LangGraph qui modifie des processus d'approvisionnement pharmaceutique modélisés en BPMN à partir de demandes en langage naturel. Le LLM (Qwen3-8B) interprète la demande en sortie structurée ; un moteur déterministe ancre chaque élément sur le modèle réel, produit un plan limité à 5 opérations, et rien n'est exécuté sans approbation humaine. Le résultat est écrit sur une copie puis revalidé.</span>
       <span class="en">A LangGraph agent that edits pharmaceutical procurement processes modelled in BPMN from natural-language requests. The LLM (Qwen3-8B) turns the request into structured output; a deterministic engine grounds every element in the real model, builds a plan limited to 5 operations, and nothing runs without human approval. The result is written to a copy and validated again.</span>
     </p>
+    <div class="demo" id="agentDemo">
+      <p class="demo-label"><span class="fr">Démo : simulez l'agent</span><span class="en">Demo: step through the agent</span></p>
+      <p class="request"><span class="fr">Demande :</span><span class="en">Request:</span> « Ajoutez une tâche utilisateur nommée 'Valider la demande' avant l'activité 'Rédiger le cahier des charges'. »</p>
+      <div class="agent-grid">
+        <ol class="agent-steps" id="agentSteps">
+          <li><b><span class="fr">Contexte compact</span><span class="en">Compact context</span></b><span class="fr">Le BPMN est résumé avec des alias : le modèle ne voit jamais les vrais identifiants.</span><span class="en">The BPMN is summarised with aliases: the model never sees real IDs.</span></li>
+          <li><b><span class="fr">Interprétation par Qwen3-8B</span><span class="en">Qwen3-8B interpretation</span></b><span class="fr">Sortie structurée, validée par un schéma Pydantic strict.</span><span class="en">Structured output, validated by a strict Pydantic schema.</span><code class="json">{"op": "insert_task_before", "anchor": "A3", "name": "Valider la demande"}</code></li>
+          <li><b><span class="fr">Ancrage déterministe</span><span class="en">Deterministic grounding</span></b><span class="fr">L'alias A3 est résolu vers l'élément réel. Si deux éléments correspondent, l'agent demande une clarification.</span><span class="en">Alias A3 is resolved to the real element. If two elements match, the agent asks for clarification.</span></li>
+          <li><b><span class="fr">Plan signé</span><span class="en">Signed plan</span></b><span class="fr">Une des 5 opérations autorisées, liée par checksum au fichier source.</span><span class="en">One of 5 allowed operations, bound by checksum to the source file.</span></li>
+          <li><b><span class="fr">Approbation humaine</span><span class="en">Human approval</span></b><span class="fr">Vous êtes le consultant : approuvez-vous ce plan ?</span><span class="en">You are the consultant: do you approve this plan?</span>
+            <span class="approval-btns">
+              <button type="button" class="btn small primary" id="approveBtn"><span class="fr">Approuver</span><span class="en">Approve</span></button>
+              <button type="button" class="btn small" id="rejectBtn"><span class="fr">Rejeter</span><span class="en">Reject</span></button>
+            </span>
+          </li>
+          <li><b><span class="fr">Exécution sur une copie</span><span class="en">Execution on a copy</span></b><span class="fr">XML, flux de séquence et géométrie BPMN-DI mis à jour. Le fichier source n'est jamais écrasé.</span><span class="en">XML, sequence flows and BPMN-DI geometry updated. The source file is never overwritten.</span></li>
+          <li><b><span class="fr">Validation indépendante</span><span class="en">Independent validation</span></b><span class="fr">Le résultat est re-parsé et vérifié. Un échec n'est jamais présenté comme un succès.</span><span class="en">The output is re-parsed and checked. A failure is never reported as success.</span></li>
+        </ol>
+        <div class="agent-side">
+          <div class="diagram" id="bpmnOut" aria-live="polite"></div>
+          <p class="agent-status mono" id="agentStatus"></p>
+          <div class="controls">
+            <button type="button" class="btn primary" id="agentNext"><span class="fr">Étape suivante</span><span class="en">Next step</span></button>
+            <button type="button" class="btn" id="agentReset"><span class="fr">Recommencer</span><span class="en">Restart</span></button>
+          </div>
+        </div>
+      </div>
+    </div>
     <ul class="facts">
       <li><b>96</b> <span class="fr">tests pytest</span><span class="en">pytest tests</span></li>
       <li><b>6</b> <span class="fr">paires AS-IS/TO-BE pour évaluer les recommandations</span><span class="en">AS-IS/TO-BE pairs to evaluate recommendations</span></li>
@@ -71,6 +99,22 @@
     <figure>
       <img src="assets/img/citation.png" alt="Recall : réponse avec citations cliquables vers les passages sources" width="1280" height="760" loading="lazy">
     </figure>
+    <div class="demo">
+      <div class="demo-head">
+        <div>
+          <p class="demo-label"><span class="fr">Démo : comparez les prompts</span><span class="en">Demo: compare the prompts</span></p>
+          <p class="demo-sub"><span class="fr">4 prompts, mêmes 19 questions, mêmes passages : seul le prompt change. Chaque réponse relue à la main, affirmation par affirmation.</span><span class="en">4 prompts, same 19 questions, same passages: only the prompt changes. Every answer reviewed by hand, claim by claim.</span></p>
+        </div>
+        <div class="seg" role="tablist" id="promptTabs">
+          <button type="button" data-p="baseline">Baseline</button>
+          <button type="button" data-p="strict1">Strict v1</button>
+          <button type="button" data-p="balanced2">Balanced v2</button>
+          <button type="button" data-p="strict2" class="on">Strict v2</button>
+        </div>
+      </div>
+      <div class="bars" id="promptBars"></div>
+      <p class="demo-note" id="promptNote"></p>
+    </div>
     <ul class="facts">
       <li><b>26 % → 95 %</b> <span class="fr">de réponses entièrement sourcées par rapport à un prompt standard</span><span class="en">fully grounded answers vs. a standard prompt</span></li>
       <li><b>14 / 14</b> <span class="fr">questions pièges refusées (benchmark de 48 questions)</span><span class="en">trap questions refused (48-question benchmark)</span></li>
@@ -89,6 +133,23 @@
       <span class="fr">Ajout de l'option <code>inheritDir</code>, qui permet aux sous-graphes d'hériter de la direction du graphe parent : implémentation dans le moteur de rendu, schéma de configuration, types et documentation. Plus de 11 PR fusionnées au total, et une invitation à rejoindre l'organisation mermaid-js.</span>
       <span class="en">Added the <code>inheritDir</code> option, which lets subgraphs inherit the parent graph's direction: implementation in the layout engine, configuration schema, types and documentation. 11+ merged PRs in total, and an invitation to join the mermaid-js organisation.</span>
     </p>
+    <div class="demo">
+      <div class="demo-head">
+        <div>
+          <p class="demo-label"><span class="fr">Démo : <code>inheritDir</code></span><span class="en">Demo: <code>inheritDir</code></span></p>
+          <p class="demo-sub"><span class="fr">Diagramme rendu en direct par Mermaid. Désactivez l'option : le sous-graphe ignore la direction du parent.</span><span class="en">Rendered live by Mermaid. Turn the option off and the subgraph ignores the parent's direction.</span></p>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="inheritToggle" checked>
+          <span class="slider"></span>
+          <code>inheritDir: <b id="inheritValue">true</b></code>
+        </label>
+      </div>
+      <div class="mermaid-grid">
+        <pre class="code" id="mermaidSource"></pre>
+        <div class="diagram" id="mermaidOut" aria-live="polite"></div>
+      </div>
+    </div>
     <p class="repo"><a href="https://github.com/mermaid-js/mermaid/pull/6470">PR #6470</a><a href="https://github.com/mermaid-js/mermaid/pulls?q=is%3Apr+author%3Anour0205+is%3Amerged"><span class="fr">Toutes les PR fusionnées</span><span class="en">All merged PRs</span></a></p>
   </article>
 
@@ -101,6 +162,16 @@
       <span class="fr">Reconnaissance des émotions dans la voix (Wav2Vec 2.0, SpeechBrain) transformée en timeline horodatée et lissée, qui pilote l'animation faciale d'un MetaHuman via un plugin C++. Prix du meilleur projet étudiant.</span>
       <span class="en">Speech emotion recognition (Wav2Vec 2.0, SpeechBrain) turned into a smoothed, timestamped timeline that drives a MetaHuman's facial animation through a C++ plugin. Best student project award.</span>
     </p>
+    <div class="demo">
+      <p class="demo-label"><span class="fr">Démo : timeline d'émotions</span><span class="en">Demo: emotion timeline</span></p>
+      <p class="pipeline"><span class="fr">Audio WAV → fenêtres glissantes → Wav2Vec 2.0 (IEMOCAP) → lissage → timeline → Unreal Engine 5</span><span class="en">WAV audio → sliding windows → Wav2Vec 2.0 (IEMOCAP) → smoothing → timeline → Unreal Engine 5</span></p>
+      <div class="emo-track" id="emoTrack"></div>
+      <div class="controls">
+        <button class="btn small" id="emoPlay" type="button"><span class="fr">Lire</span><span class="en">Play</span></button>
+        <span id="emoNow" class="mono">0.0 s · neutral</span>
+      </div>
+      <p class="demo-note"><span class="fr">Illustration du format produit par l'API (segments horodatés avec score de confiance), pas un enregistrement réel.</span><span class="en">Illustration of the format the API produces (timestamped segments with confidence scores), not a real recording.</span></p>
+    </div>
     <p class="stack">PyTorch · SpeechBrain · FastAPI · Docker · UE5 C++</p>
     <p class="repo"><a href="https://github.com/nour0205/speech-emotion-recognition">speech-emotion-recognition</a></p>
   </article>
@@ -140,6 +211,7 @@
 
 <footer>© 2026 Nour Kouider</footer>
 </div>
+<script src="assets/vendor/mermaid-11.12.0.min.js"></script>
 <script src="assets/app.js"></script>
 </body>
 </html>
