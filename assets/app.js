@@ -8,6 +8,7 @@
   const $$ = (s, el = document) => [...el.querySelectorAll(s)];
   const css = name => getComputedStyle(root).getPropertyValue(name).trim();
   const dark = window.matchMedia('(prefers-color-scheme: dark)');
+  const isDark = () => (root.dataset.theme ? root.dataset.theme === 'dark' : dark.matches);
 
   /* ---------- language ---------- */
   let lang = store.get('lang') || (/^fr\b/i.test(navigator.language || 'fr') ? 'fr' : 'en');
@@ -34,9 +35,9 @@
       theme: 'base',
       fontFamily: 'Inter, system-ui, sans-serif',
       themeVariables: {
-        darkMode: dark.matches,
-        background: css('--bg'),
-        primaryColor: css('--bg'),
+        darkMode: isDark(),
+        background: css('--surface'),
+        primaryColor: css('--surface'),
         primaryTextColor: css('--ink'),
         primaryBorderColor: css('--muted'),
         lineColor: css('--muted'),
@@ -179,7 +180,7 @@
   }));
 
   /* emotion timeline (illustrative) */
-  const EMO = { neutral: '#6b7280', happy: '#a16207', sad: '#1e40af', angry: '#9f1239' };
+  const EMO = { neutral: '#6b7378', happy: '#a8741a', sad: '#2f5d8a', angry: '#9a3b34' };
   const timeline = [
     ['neutral', 0, 2.5, 0.81], ['happy', 2.5, 6, 0.88], ['neutral', 6, 7.5, 0.72],
     ['sad', 7.5, 10.5, 0.84], ['angry', 10.5, 12.5, 0.79], ['happy', 12.5, 15, 0.9],
